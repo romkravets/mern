@@ -1,9 +1,9 @@
-const {Schema, model} = require('mongoose')
+const {Schema, model, Types} = require('mongoose')
 
 const shema = new Schema({
    email: {type: String, required: true, unique: true},
    password: {type: String, required: true},
-   links: [type: Types.ObjeciId, ref:'Link']
+   links: [{ type: Types.ObjectId, ref: 'Link' }]
 
 })
 
