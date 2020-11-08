@@ -16,6 +16,7 @@
     "config": "^3.3.2",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
+    "http-proxy-middleware": "^1.0.6",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.11"
   },

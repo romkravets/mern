@@ -26,7 +26,6 @@
     ]
   },
   "proxy": "http://localhost:5000",
-  "secure":false,
   "browserslist": {
     "production": [
       ">0.2%",
