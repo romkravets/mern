@@ -17,6 +17,7 @@ router.post(
   ],
   async (req, res) => {
   try {
+    console.log(req.body);
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
@@ -42,6 +43,7 @@ router.post(
     res.status(201).json({ message: 'Пользователь создан' })
 
   } catch (e) {
+    console.log(e);
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' })
   }
 })
