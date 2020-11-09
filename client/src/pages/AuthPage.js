@@ -28,6 +28,16 @@ export const AuthPage = () => {
      }
   }
 
+  const loginHandler = async () => {
+     try{
+        const data = await request('/api/auth/login', 'POST', {...form});
+        //auth.login(data.token, data.userId)
+        message(data.message);
+     } catch(e) {
+
+     }
+  }
+
    return (
      <div className="row">
       <div className="col s6 offset-s3">
@@ -70,7 +80,7 @@ export const AuthPage = () => {
               className="btn yellow darken-4"
               style={{marginRight: 10}}
               disabled={loading}
-              //onClick={loginHandler}
+              onClick={loginHandler}
             >
               Войти
             </button>
