@@ -2,6 +2,5 @@
    "port": 5000,
    "jwtSecret": "rom mern",
    "mongoUrl": "mongodb+srv://roman:1782635@cluster0.d9nri.mongodb.net/app?retryWrites=true&w=majority",
-
    "baseUrl": "http://localhost:5000"
 }
