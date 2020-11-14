@@ -1,90 +1,96 @@
 const {Router} = require('express')
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 const config = require('config')
-const {check, vlidationResult} = require('express-validator')
+const jwt = require('jsonwebtoken')
+const {check, validationResult} = require('express-validator')
 const User = require('../models/User')
 const router = Router()
 
+
 // /api/auth/register
-router.post('/register', 
-   [
-      check('email', 'Not valid email').isEmail(),
-      check('password', "Length 6").isLength({min: 6})
-   ],
-   async (req, res) => {
-   try {
-      const errors = validationResult(req)
+router.post(
+  '/register',
+  [
+    check('email', 'Incorrect email').isEmail(),
+    check('password', 'Minimum password length 6 characters')
+      .isLength({ min: 6 })
+  ],
+  async (req, res) => {
+  try {
+    console.log(req.body);
+    const errors = validationResult(req)
 
-      if (errors.isEmpty()) {
-         return res.status(400).json({
-            errors: errors.array(),
-            message: "Not valid register"
-         })
-      }
-      const {email, password} = req.body
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        message: 'Incorrect registration data'
+      })
+    }
 
-      const candidate = await User.findeOne({email})
+    const {email, password} = req.body
 
-      if(candidate) {
-         return res.status(400).json({message: 'Empty'})
-      } 
+    const candidate = await User.findOne({ email })
 
-      const hashedPassword = await bcrypt.hash(password, 12) 
-      const user = new User({email, password: hashedPassword})
+    if (candidate) {
+      return res.status(400).json({ message: 'This user already exists' })
+    }
 
-      await user.save()
+    const hashedPassword = await bcrypt.hash(password, 12)
+    const user = new User({ email, password: hashedPassword })
 
-      res.status(201).json({mesage: "User created"})
+    await user.save()
 
-   } catch (e) {
-      res.status(500).json({message: "Error"})
-   }
+    res.status(201).json({ message: 'User created' })
+
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: 'Something went wrong, please try again' })
+  }
 })
 
 // /api/auth/login
 router.post(
-   '/login', 
-    [
-      check('email', 'Input correct rmail').normalizeEmail().isEmail(),
-      check('password', 'Input password').exists()
-   ],
-   async (req, res) => {
-      try {
-      const errors = validationResult(req)
+  '/login',
+  [
+    check('email', 'Please enter correct email').normalizeEmail().isEmail(),
+    check('password', 'Введите пароль').exists()
+  ],
+  async (req, res) => {
+  try {
+    const errors = validationResult(req)
 
-      if (errors.isEmpty()) {
-         return res.status(400).json({
-            errors: errors.array(),
-            message: "Not valid register"
-         })
-      }
-      const {email, password} = req.body
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        message: 'Invalid login data'
+      })
+    }
 
-      const user = await User.findOne({email})
+    const {email, password} = req.body
 
-      if(!user) {
-         return res.status(400).json({message: 'Not found'})
-      }
+    const user = await User.findOne({ email })
 
-      const isMatch = await bcrypt.compair(password, user.password)
+    if (!user) {
+      return res.status(400).json({ message: 'User is not found' })
+    }
 
-      if (!isMatch) {
-         return res.status(400).json({message: "Try egain"})
-      }
+    const isMatch = await bcrypt.compare(password, user.password)
 
-      const token = jwt.sign(
-         {userId: user.id},
-         config.get('jwtSecret'),
-         {expiresIn: '1h'}
-      )
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid password, please try again' })
+    }
 
-      res.json({token, userId: user.id})
-    
+    const token = jwt.sign(
+      { userId: user.id },
+      config.get('jwtSecret'),
+      { expiresIn: '1h' }
+    )
 
-   } catch (e) {
-      res.status(500).json({message: "Error"})
-   }
+    res.json({ token, userId: user.id })
+
+  } catch (e) {
+    res.status(500).json({ message: 'Something went wrong, please try again' })
+  }
 })
 
 module.exports = router
