@@ -30,14 +30,14 @@ export const CreatePage = () => {
       <div className="col s8 offset-s2" style={{paddingTop: '2rem'}}>
         <div className="input-field">
           <input
-            placeholder="Вставьте ссылку"
+            placeholder="Insert link"
             id="link"
             type="text"
             value={link}
             onChange={e => setLink(e.target.value)}
             onKeyPress={pressHandler}
           />
-          <label htmlFor="link">Введите ссылку</label>
+          <label htmlFor="link">Add link</label>
         </div>
       </div>
     </div>
